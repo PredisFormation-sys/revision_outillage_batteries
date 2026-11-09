@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Révision – Les bases de l'outillage & particularités des marques</title>
+<style>
+:root{
+  --red:#c8102e; --red-d:#9a0c23; --ink:#1d1f24; --mute:#5d6470; --line:#e3e5ea;
+  --bg:#f6f6f4; --card:#fff; --ok:#1e8e4e; --ko:#c8102e; --warn:#d98a00;
+  --bosch:#1f5aa8; --dewalt:#e8b500; --makita:#0a8a9a; --milw:#c8102e;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+header{background:var(--ink);color:#fff;padding:22px 20px 0}
+header .wrap{max-width:1050px;margin:auto}
+header h1{margin:0;font-size:1.45rem;letter-spacing:.2px}
+header h1 span{color:#ff4b5f}
+header p{margin:4px 0 14px;color:#c9ccd3;font-size:.95rem}
+nav{display:flex;gap:4px;flex-wrap:wrap}
+nav button{background:transparent;color:#c9ccd3;border:0;padding:11px 16px;font-size:.95rem;cursor:pointer;border-radius:8px 8px 0 0;font-weight:600}
+nav button.active{background:var(--bg);color:var(--ink)}
+main{max-width:1050px;margin:auto;padding:22px 20px 60px}
+.panel{display:none}.panel.active{display:block}
+h2{font-size:1.25rem;margin:6px 0 14px}
+h3{margin:0 0 8px;font-size:1.05rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:16px}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;padding:2px 8px;border-radius:20px;color:#fff;margin-right:6px;vertical-align:middle}
+.t-bosch{background:var(--bosch)}.t-dewalt{background:var(--dewalt);color:#111}.t-makita{background:var(--makita)}.t-milw{background:var(--milw)}.t-base{background:#555}
+.brand{border-left:6px solid #999}
+.brand.bosch{border-left-color:var(--bosch)}.brand.dewalt{border-left-color:var(--dewalt)}.brand.makita{border-left-color:var(--makita)}.brand.milw{border-left-color:var(--milw)}
+ul{margin:6px 0;padding-left:20px}li{margin:3px 0}
+.key{background:#fff4d6;padding:0 4px;border-radius:4px;font-weight:700}
+.big{font-size:1.7rem;font-weight:800;color:var(--red);line-height:1.1}
+.memo{background:#fdecef;border:1px dashed var(--red);border-radius:10px;padding:10px 14px;margin-top:10px;font-size:.93rem}
+.memo b{color:var(--red-d)}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+th,td{border:1px solid var(--line);padding:6px 8px;text-align:center}
+th{background:#eef1f6}
+td.l,th.l{text-align:left}
+.scroll{overflow-x:auto}
+.hide-ans td.ans{color:transparent;background:repeating-linear-gradient(45deg,#eee,#eee 4px,#f8f8f8 4px,#f8f8f8 8px);cursor:pointer}
+.hide-ans td.ans.shown{color:inherit;background:#e9f7ef}
+.btn{background:var(--red);color:#fff;border:0;border-radius:8px;padding:9px 16px;font-weight:700;cursor:pointer;font-size:.92rem}
+.btn:hover{background:var(--red-d)}
+.btn.sec{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.btn.ok{background:var(--ok)}.btn.ko{background:var(--warn)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+select,input[type=number]{font-size:.95rem;padding:7px 9px;border:1px solid #cfd3da;border-radius:8px;background:#fff}
+/* progress */
+.bar{height:10px;background:#e5e7eb;border-radius:10px;overflow:hidden;flex:1;min-width:160px}
+.bar>div{height:100%;background:var(--ok);width:0;transition:width .3s}
+/* flashcards */
+.fc-wrap{perspective:1200px;max-width:620px;margin:10px auto}
+.fc{position:relative;height:270px;transform-style:preserve-3d;transition:transform .5s;cursor:pointer}
+.fc.flip{transform:rotateY(180deg)}
+.fc .face{position:absolute;inset:0;backface-visibility:hidden;border-radius:16px;padding:26px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;border:1px solid var(--line);box-shadow:0 6px 18px rgba(0,0,0,.06)}
+.fc .front{background:#fff;font-size:1.2rem;font-weight:700}
+.fc .back{background:#1d1f24;color:#fff;transform:rotateY(180deg);font-size:1.02rem}
+.fc .hint{position:absolute;bottom:12px;font-size:.78rem;color:#9aa0aa;font-weight:400}
+.fc-meta{display:flex;justify-content:space-between;color:var(--mute);font-size:.85rem;max-width:620px;margin:auto}
+/* quiz */
+.q-opt{display:block;width:100%;text-align:left;background:#fff;border:1px solid #cfd3da;border-radius:10px;padding:11px 14px;margin:7px 0;font-size:.97rem;cursor:pointer}
+.q-opt:hover:not(:disabled){border-color:var(--ink)}
+.q-opt.good{background:#e6f5ec;border-color:var(--ok);font-weight:600}
+.q-opt.bad{background:#fde8eb;border-color:var(--ko)}
+.expl{margin-top:10px;padding:10px 14px;border-radius:8px;background:#f1f3f7;font-size:.93rem;display:none}
+.score{font-size:2.4rem;font-weight:800;color:var(--red)}
+/* cells */
+.cells{display:flex;flex-direction:column;gap:6px;margin:12px 0}
+.cellrow{display:flex;gap:4px;align-items:center}
+.cell{width:30px;height:30px;border-radius:50%;background:var(--red);color:#fff;font-size:.6rem;display:flex;align-items:center;justify-content:center;font-weight:700}
+.result{font-size:1.1rem;font-weight:700}
+/* sort game */
+.pool{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.chip{background:#fff;border:1px solid #cfd3da;border-radius:20px;padding:6px 12px;font-size:.88rem;cursor:pointer;user-select:none}
+.chip.sel{border-color:var(--ink);background:#1d1f24;color:#fff}
+.chip.good{background:#e6f5ec;border-color:var(--ok)}
+.chip.bad{background:#fde8eb;border-color:var(--ko)}
+.bins{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.bin{border:2px dashed #cfd3da;border-radius:12px;min-height:120px;padding:10px;cursor:pointer}
+.bin h4{margin:0 0 6px;font-size:.92rem}
+.bin .chip{display:inline-block;margin:3px}
+.small{font-size:.85rem;color:var(--mute)}
+.analogy{display:flex;gap:12px;align-items:flex-start}
+.analogy .ico{font-size:1.9rem;line-height:1}
+.client{background:#1d1f24;color:#fff;border-radius:12px;padding:14px 18px;margin:10px 0;font-style:italic;position:relative}
+.client:before{content:"🗣️ Le client :";display:block;font-style:normal;font-size:.8rem;color:#ff8a98;font-weight:700;margin-bottom:4px}
+.scq{margin:12px 0}.scq label.q-opt{display:flex;gap:8px;align-items:center}
+.cabrow{display:grid;grid-template-columns:260px 1fr 40px;gap:10px;align-items:center;margin:7px 0}
+.cabrow select{width:100%}.cabf{font-weight:600;font-size:.92rem}
+@media (max-width:640px){.cabrow{grid-template-columns:1fr}}
+@media (max-width:640px){.bins{grid-template-columns:1fr}.fc{height:300px}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <h1>Les bases de l'outillage <span>&</span> particularités des marques</h1>
+  <p>Formation électroportatif Tech'up – support de révision et de mémorisation</p>
+  <nav id="nav">
+    <button data-p="fiches" class="active">📘 Fiches</button>
+    <button data-p="flash">🃏 Flashcards</button>
+    <button data-p="quiz">✅ Quiz</button>
+    <button data-p="ex">🤝 Exercices de vente</button>
+  </nav>
+</div></header>
+
+<main>
+<!-- ================= FICHES ================= -->
+<section id="fiches" class="panel active">
+
+<div class="card">
+  <h2>1. Les bases : Volt, Ampère, Ampère-heure</h2>
+  <div class="grid g3">
+    <div class="analogy"><div class="ico">⚙️</div><div>
+      <h3>Tension – V (Volt)</h3>
+      La <b>force</b> du moteur, comme le nombre de cylindres d'une voiture.<br>
+      12 V = tension basse → charge légère.<br>18 V = tension élevée → peut tirer une remorque lourde.
+    </div></div>
+    <div class="analogy"><div class="ico">🐎</div><div>
+      <h3>Intensité – A (Ampère)</h3>
+      Le <b>débit de puissance</b>, comme les chevaux du moteur.<br>
+      Batterie standard ≈ 65 CV, batterie <b>ProCORE HD</b> ≈ 150 CV, à tension égale (18 V).
+    </div></div>
+    <div class="analogy"><div class="ico">⛽</div><div>
+      <h3>Capacité – Ah (Ampère-heure)</h3>
+      La <b>taille du réservoir</b>, donc l'<b>autonomie</b>.<br>
+      Petite capacité 4 Ah → trajet court.<br>Grande capacité 8 à 12 Ah → long trajet.
+    </div></div>
+  </div>
+  <div class="memo"><b>À retenir :</b> V = force · A = puissance délivrée · Ah = autonomie.
+  L'énergie totale se calcule en <b>Wh = V × Ah</b> (ex. 18 V × 12 Ah = 216 Wh).</div>
+
+  <h3 style="margin-top:18px">Choisir sa tension selon le métier</h3>
+  <div class="grid g3">
+    <div class="card" style="margin:0;text-align:center"><div class="big">12 V</div>Second œuvre</div>
+    <div class="card" style="margin:0;text-align:center"><div class="big">18 V</div>Gros œuvre</div>
+    <div class="card" style="margin:0;text-align:center"><div class="big">40 V max</div>Jardin & forte puissance</div>
+  </div>
+
+  <h3 style="margin-top:18px">Comment se construit un pack batterie</h3>
+  <ul>
+    <li>Une cellule lithium-ion = <span class="key">3,6 V</span> (4,0 V max).</li>
+    <li>Cellules <b>en série</b> → on additionne les <b>volts</b> : 5 × 3,6 V = 18 V.</li>
+    <li>Chaînes <b>en parallèle</b> → on additionne les <b>Ah</b> : 2 chaînes de 4 Ah = 8 Ah.</li>
+    <li>Cellule <b>18650</b> = 18 mm × 65 mm, ≈ 79 W (puissance standard), 2 à 3 Ah.</li>
+    <li>Cellule <b>21700</b> = 21 mm × 70 mm, ≈ 162 W (haute puissance), 3 à 4 Ah.</li>
+  </ul>
+  <div class="memo"><b>Moyen mnémo :</b> le nom de la cellule donne ses dimensions : <b>18</b>650 → <b>18</b> mm de diamètre, <b>65</b> mm de long ; <b>21</b>70<b>0</b> → <b>21</b> mm × <b>70</b> mm.</div>
+</div>
+
+<div class="card brand bosch">
+  <h2><span class="tag t-bosch">BOSCH</span> ProCORE18V & gamme Expert</h2>
+  <div class="grid g2">
+    <div>
+      <h3>ProCORE18V : les 4 différences</h3>
+      <ul>
+        <li><b>Performance cellulaire</b> : cellules Haute Densité 21700 → <span class="key">+87 % de puissance</span> (45 A par couche contre 24 A).</li>
+        <li><b>Refroidissement</b> : <b>Coolpack 2.0</b>, échangeur thermique breveté et suppression des poches d'air → durée de vie jusqu'à <span class="key">135 %</span>, temps d'exécution jusqu'à <span class="key">150 %</span>.</li>
+        <li><b>Assemblage</b> : connecteurs en <b>cuivre soudés au laser</b> → conductivité <span class="key">3× supérieure</span>.</li>
+        <li><b>Design compact</b> : au moins <span class="key">29 % plus compacte</span> que les batteries haute performance concurrentes, <b>100 % compatible avec les outils depuis 2008</b>.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>La bonne batterie avec le bon outil</h3>
+      <table>
+        <tr><th>Compact<br>4,0 Ah</th><th>Performance<br>8,0 Ah</th><th>Endurance<br>12,0 Ah</th></tr>
+        <tr>
+          <td class="l small">Perceuse-visseuse GSR/GSB, visseuse à chocs GDS/GDX/GDR, perfo &lt; 2 J, scie sabre &lt; 25 mm, scie sauteuse GST, scie à ruban GCB, meuleuse droite GGS, ponceuse GSS, rabot GHO, GOP, cisaille GSC, aspirateur &lt; 1 L, souffleur GBL, lampes, radio</td>
+          <td class="l small">Perforateur 2 à 4 J, scie circulaire/plongeante GKS/GKM/GKT, scie sabre &gt; 25 mm, meuleuse GWS, aspirateur &gt; 1 L</td>
+          <td class="l small">Scie sur table, perforateur &gt; 4 J, scie à onglet</td>
+        </tr>
+      </table>
+      <p class="small">Outils <b>BITURBO</b> (brushless, puissance équivalente au filaire) : utiliser ProCORE18V(+) 5,5 / 8,0 / 12,0 Ah.</p>
+    </div>
+  </div>
+
+  <h3 style="margin-top:14px">Temps de charge (minutes) – système AMPShare</h3>
+  <p class="small">Mode révision : cliquez sur une case grisée pour révéler la valeur.
+  <button class="btn sec" id="toggleTable" style="padding:4px 10px;font-size:.8rem">Tout afficher / masquer</button></p>
+  <div class="scroll">
+  <table id="chargeTable" class="hide-ans">
+    <tr><th class="l">Chargeur</th><th>GBA 2,0</th><th>GBA 4,0</th><th>GBA 5,0</th><th>ProCORE 4,0</th><th>ProCORE 5,5</th><th>ProCORE 8,0</th><th>ProCORE+ 8,0</th><th>ProCORE 12,0</th></tr>
+    <tr><td class="l">GAL 18V-160 ultra-rapide (50 %)</td><td class="ans">10</td><td class="ans">10</td><td class="ans">12</td><td class="ans">9</td><td class="ans">12</td><td class="ans">14</td><td class="ans">16</td><td class="ans">22</td></tr>
+    <tr><td class="l">GAL 18V-160 ultra-rapide (100 %)</td><td class="ans">23</td><td class="ans">24</td><td class="ans">33</td><td class="ans">35</td><td class="ans">34</td><td class="ans">41</td><td class="ans">38</td><td class="ans">53</td></tr>
+    <tr><td class="l">GAL 12V/18V-80 rapide</td><td class="ans">25</td><td class="ans">35</td><td class="ans">46</td><td class="ans">46</td><td class="ans">46</td><td class="ans">65</td><td class="ans">63</td><td class="ans">93</td></tr>
+    <tr><td class="l">GAL 18V6-80 multi-baies</td><td class="ans">29</td><td class="ans">37</td><td class="ans">47</td><td class="ans">47</td><td class="ans">47</td><td class="ans">68</td><td class="ans">67</td><td class="ans">96</td></tr>
+    <tr><td class="l">GAL 18V-40 compact</td><td class="ans">35</td><td class="ans">64</td><td class="ans">78</td><td class="ans">65</td><td class="ans">84</td><td class="ans">124</td><td class="ans">124</td><td class="ans">172</td></tr>
+    <tr><td class="l">GAL 18V-20</td><td class="ans">57</td><td class="ans">125</td><td class="ans">155</td><td class="ans">128</td><td class="ans">171</td><td class="ans">238</td><td class="ans">238</td><td class="ans">357</td></tr>
+  </table></div>
+  <div class="memo"><b>À retenir :</b> plus le chargeur a d'ampères (160 &gt; 80 &gt; 40 &gt; 20), plus la charge est rapide. Une 12 Ah sur un GAL 18V-20 = près de 6 h ; sur un GAL 18V-160 = 53 min.</div>
+
+  <h3 style="margin-top:14px">Gamme Expert (batteries & chargeurs)</h3>
+  <div class="grid g2">
+    <ul>
+      <li>Cellules <b>« tabless » (sans connecteurs)</b> : une multitude de chemins de courant au lieu de deux → moins de résistance interne, moins de chaleur, plus de puissance et d'autonomie.</li>
+      <li><b>Boîtier renforcé</b> : chocs, humidité, poussière → longue durée de vie.</li>
+      <li><b>Active Air Cooling</b> : refroidit avant, pendant et après la charge.</li>
+      <li><b>FlexTemp Charging</b> : charge de <span class="key">−10 °C à +55 °C</span>.</li>
+    </ul>
+    <ul>
+      <li><b>EXAL18V-160</b> : jusqu'à <span class="key">3×</span> plus rapide que le GAL 18V-40, courant 16 A, EXBA18V-80 chargée en <span class="key">39 min</span>, Active Air Cooling 2.0, 3 modes : Standard, Power Boost, Longue durée de vie.</li>
+      <li><b>EXAL 18V2-320</b> : jusqu'à <span class="key">6×</span> plus rapide, double baie en parallèle (16 A par baie), deux EXBA18V-80 à 100 % en 39 min, Active Air Cooling 3.0, rangement en coffret L-BOXX.</li>
+    </ul>
+  </div>
+</div>
+
+<div class="card brand dewalt">
+  <h2><span class="tag t-dewalt">DEWALT</span> Powerstack & XR FlexVolt</h2>
+  <div class="grid g2">
+    <div>
+      <h3>POWERSTACK</h3>
+      <ul>
+        <li>Cellules <b>empilées</b> (technologie « pouch ») au lieu de cellules cylindriques.</li>
+        <li>Deux ampérages : <span class="key">1,7 Ah</span> (+25 % plus compacte) et <span class="key">5 Ah</span> (+50 % de travail effectué).</li>
+        <li><b>50 % plus puissante</b> et <b>2× plus de durée de vie</b>.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>XR FlexVolt 18 V / 54 V</h3>
+      <ul>
+        <li>Une même batterie s'adapte : <b>18 V</b> sur les outils XR, <b>54 V</b> sur les outils FlexVolt.</li>
+        <li>En 18 V : 5 cellules en série × <b>3 niveaux en parallèle</b> → 18 V × 12 Ah = <b>216 Wh</b>.</li>
+        <li>En 54 V : <b>15 cellules en série</b>, 1 niveau → 54 V × 4 Ah = <b>216 Wh</b>.</li>
+        <li>Slogan : « la puissance du filaire, la liberté du sans fil » : bois, métal, béton, jardin.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="memo"><b>Astuce :</b> l'énergie (Wh) ne change pas, seul le câblage interne change : on échange des Ah contre des volts.</div>
+</div>
+
+<div class="card brand makita">
+  <h2><span class="tag t-makita">MAKITA</span> 3 plateformes (+ Dolmar)</h2>
+  <div class="grid g3">
+    <div class="card" style="margin:0"><h3>XGT – 40 V max</h3>+ de <b>22 outils</b><br><span class="small">Nouvelle gamme, forte puissance</span></div>
+    <div class="card" style="margin:0"><h3>LXT – 18 V</h3>+ de <b>320 outils</b><br><span class="small">Batteries 1,5 à 6 Ah</span></div>
+    <div class="card" style="margin:0"><h3>CXT – 12 V max</h3>+ de <b>60 outils</b><br><span class="small">Batteries 1,5 à 4 Ah</span></div>
+  </div>
+  <div class="grid g2" style="margin-top:12px">
+    <div>
+      <h3>Références clés</h3>
+      <ul>
+        <li>Batterie <b>BL1860B</b> 18 V 6 Ah – réf. 197422-4 – témoin de charge intégré.</li>
+        <li>Chargeur rapide <b>DC18RC</b> – réf. 195584-2.</li>
+        <li><b>LOT0154</b> = DC18RC + 2 batteries BL1850B 18 V 5 Ah.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Temps de charge DC18RC</h3>
+      <table><tr><th>3 Ah</th><th>4 Ah</th><th>5 Ah</th><th>6 Ah</th></tr>
+      <tr><td>22 min</td><td>36 min</td><td>45 min</td><td>55 min</td></tr></table>
+      <p class="small">Les 2 chiffres après « BL18 » = la capacité : BL18<b>60</b> = 6,0 Ah, BL18<b>50</b> = 5,0 Ah.</p>
+    </div>
+  </div>
+</div>
+
+<div class="card brand milw">
+  <h2><span class="tag t-milw">MILWAUKEE</span> M12 / M18 / MX FUEL</h2>
+  <div class="grid g2">
+    <div>
+      <h3>Atouts des batteries REDLITHIUM-ION</h3>
+      <ul>
+        <li><b>REDLINK™</b> : électronique intelligente, communication batterie ↔ outil (performance, protection contre les surcharges).</li>
+        <li>Conducteurs renforcés et grandes cellules → moins de surchauffe ; fonctionne jusqu'à <span class="key">−20 °C</span> (−28 °C en High Output).</li>
+        <li>Construction antichoc, support monobloc, protection eau et poussière.</li>
+        <li>Voyant de charge : sur les <b>outils M12</b> et sur la <b>batterie M18</b>.</li>
+      </ul>
+      <h3>Assemblage d'un pack M18</h3>
+      <ul>
+        <li>1 chaîne de 5 cellules 18650 de 2 Ah = <b>18 V 2 Ah</b>.</li>
+        <li>2 chaînes de 5 cellules 21700 de 4 Ah = <b>18 V 8 Ah</b> (High Output).</li>
+        <li>+ platine électronique REDLINK brevetée.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>3 niveaux de batteries M18</h3>
+      <table>
+        <tr><th>REDLITHIUM</th><th>High Output XC5</th><th>FORGE</th></tr>
+        <tr><td class="small">Performance fondamentale. Fiable, compatible + de 325 outils M18</td>
+            <td class="small">Technologie améliorée : +50 % de puissance, +50 % plus frais sous forte charge</td>
+            <td class="small">Performance maximale : plus de puissance, recharge plus rapide, durée de vie plus longue</td></tr>
+      </table>
+      <h3 style="margin-top:10px">Focus FORGE (12 Ah / 8 Ah)</h3>
+      <ul class="small">
+        <li>Jusqu'à +50 % de puissance vs M18 High Output 12 Ah.</li>
+        <li>80 % en <b>35 min</b>, 100 % en <b>45 min</b> (super chargeur double baie).</li>
+        <li><b>COOL-CYCLE™</b> : refroidissement actif.</li>
+        <li>Boîtier résistant aux huiles, solvants et graisses ; indicateur lisible en plein soleil.</li>
+        <li>Compatible avec tous les outils M18.</li>
+      </ul>
+    </div>
+  </div>
+  <h3 style="margin-top:12px">MX FUEL – Equipment System (zéro émission)</h3>
+  <ul>
+    <li>Recette : 1. moteur <b>brushless</b> + 2. batterie <b>REDLITHIUM</b> + 3. <b>REDLINK PLUS</b>.</li>
+    <li>Transfert de puissance en courant continu de <span class="key">72 V</span> ≈ moteur thermique de <span class="key">70 cm³</span>, soit ≈ <b>5 CV</b> ou ≈ <b>3 700 W</b>.</li>
+    <li>Face à une découpeuse thermique (74 cm³, 3,7 kW, disque 300/350 mm, 9,9/10,1 kg, coupe 100/125 mm).</li>
+  </ul>
+  <div class="memo"><b>Moyen mnémo :</b> « <b>72</b> V ≈ <b>70</b> cm³ ≈ <b>3,7</b> kW » : trois nombres proches à associer.</div>
+</div>
+</section>
+
+<!-- ================= FLASHCARDS ================= -->
+<section id="flash" class="panel">
+  <div class="card">
+    <h2>Flashcards</h2>
+    <p class="small">Cliquez la carte (ou Espace) pour la retourner, puis évaluez-vous. Les cartes « À revoir » reviennent plus souvent. Votre progression est mémorisée dans ce navigateur.</p>
+    <div class="row" style="margin-bottom:10px">
+      <select id="fcFilter">
+        <option value="all">Tous les thèmes</option>
+        <option value="base">Bases V / A / Ah</option>
+        <option value="bosch">Bosch</option>
+        <option value="dewalt">DeWalt</option>
+        <option value="makita">Makita</option>
+        <option value="milw">Milwaukee</option>
+      </select>
+      <div class="bar"><div id="fcBar"></div></div>
+      <span id="fcStat" class="small"></span>
+      <button class="btn sec" id="fcReset">Réinitialiser</button>
+    </div>
+    <div class="fc-meta"><span id="fcTheme"></span><span id="fcCount"></span></div>
+    <div class="fc-wrap"><div class="fc" id="fc">
+      <div class="face front"><div id="fcQ"></div><div class="hint">cliquer pour retourner</div></div>
+      <div class="face back"><div id="fcA"></div></div>
+    </div></div>
+    <div class="row" style="justify-content:center">
+      <button class="btn ko" id="fcKo">🔁 À revoir</button>
+      <button class="btn ok" id="fcOk">✔ Je savais</button>
+    </div>
+  </div>
+</section>
+
+<!-- ================= QUIZ ================= -->
+<section id="quiz" class="panel">
+  <div class="card" id="quizStart">
+    <h2>Quiz de validation</h2>
+    <p>Mises en situation de vente : conseil, objections, vente additionnelle. La correction donne l'argument à retenir.</p>
+    <div class="row">
+      <select id="qTheme">
+        <option value="all">Tous les thèmes</option>
+        <option value="base">Bases V / A / Ah</option>
+        <option value="bosch">Bosch</option>
+        <option value="dewalt">DeWalt</option>
+        <option value="makita">Makita</option>
+        <option value="milw">Milwaukee</option>
+      </select>
+      <select id="qNb"><option>10</option><option>15</option><option value="999">Toutes</option></select>
+      <button class="btn" id="qGo">Lancer le quiz</button>
+    </div>
+    <p class="small" id="qBest"></p>
+  </div>
+  <div class="card" id="quizBox" style="display:none">
+    <div class="row" style="justify-content:space-between"><span id="qProg" class="small"></span><span id="qTag"></span></div>
+    <h3 id="qText" style="margin-top:10px;font-size:1.12rem"></h3>
+    <div id="qOpts"></div>
+    <div class="expl" id="qExpl"></div>
+    <div class="row" style="justify-content:flex-end;margin-top:12px"><button class="btn" id="qNext" style="display:none">Suivant →</button></div>
+  </div>
+  <div class="card" id="quizEnd" style="display:none;text-align:center">
+    <div class="score" id="qScore"></div>
+    <p id="qMsg"></p>
+    <div id="qWrong" style="text-align:left"></div>
+    <button class="btn" id="qAgain">Recommencer</button>
+  </div>
+</section>
+
+<!-- ================= EXERCICES ================= -->
+<section id="ex" class="panel">
+  <div class="card">
+    <h2>Exercice 1 – Mises en situation client</h2>
+    <p class="small">Lisez la demande du client, choisissez le produit à conseiller et l'argument qui va le convaincre, puis validez. Le débrief explique la réponse attendue.</p>
+    <div class="row" style="justify-content:space-between"><span id="scProg" class="small"></span><span id="scScore" class="small"></span></div>
+    <div class="client" id="scClient"></div>
+    <div id="scQs"></div>
+    <div class="expl" id="scDebrief"></div>
+    <div class="row" style="justify-content:flex-end;margin-top:12px">
+      <button class="btn" id="scValid">Valider</button>
+      <button class="btn" id="scNext" style="display:none">Client suivant →</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Exercice 2 – De la caractéristique au bénéfice client</h2>
+    <p class="small">Un client n'achète pas une caractéristique technique, il achète ce qu'elle lui apporte. Associez chaque caractéristique au bénéfice à lui présenter.</p>
+    <div id="cab"></div>
+    <div class="row" style="margin-top:10px"><button class="btn" id="cabCheck">Corriger</button><button class="btn sec" id="cabReset">Mélanger</button><span id="cabRes" class="result"></span></div>
+  </div>
+
+  <div class="card">
+    <h2>Exercice 3 – Le client achète cet outil Bosch : quelle batterie lui proposer ?</h2>
+    <p class="small">Cliquez sur un outil, puis sur la batterie à proposer avec (Compact 4 Ah, Performance 8 Ah ou Endurance 12 Ah). Cliquez ensuite sur « Corriger ».</p>
+    <div class="pool" id="pool"></div>
+    <div class="bins">
+      <div class="bin" data-b="C"><h4>Compact – 4,0 Ah</h4><div></div></div>
+      <div class="bin" data-b="P"><h4>Performance – 8,0 Ah</h4><div></div></div>
+      <div class="bin" data-b="E"><h4>Endurance – 12,0 Ah</h4><div></div></div>
+    </div>
+    <div class="row" style="margin-top:12px"><button class="btn" id="sortCheck">Corriger</button><button class="btn sec" id="sortReset">Recommencer</button><span id="sortRes" class="result"></span></div>
+  </div>
+</section>
+</main>
+
+<script>
+/* ---------- storage (safe) ---------- */
+const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const TH={base:['Bases','t-base'],bosch:['Bosch','t-bosch'],dewalt:['DeWalt','t-dewalt'],makita:['Makita','t-makita'],milw:['Milwaukee','t-milw']};
+const tag=t=>`<span class="tag ${TH[t][1]}">${TH[t][0]}</span>`;
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+
+/* ---------- nav ---------- */
+document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('#nav button').forEach(x=>x.classList.toggle('active',x===b));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id===b.dataset.p));
+  window.scrollTo(0,0);
+});
+
+/* ---------- table reveal ---------- */
+document.querySelectorAll('#chargeTable td.ans').forEach(td=>td.onclick=()=>td.classList.toggle('shown'));
+document.getElementById('toggleTable').onclick=()=>{
+  const cells=[...document.querySelectorAll('#chargeTable td.ans')];
+  const all=cells.every(c=>c.classList.contains('shown'));
+  cells.forEach(c=>c.classList.toggle('shown',!all));
+};
+
+/* ---------- FLASHCARDS ---------- */
+const CARDS=[
+ ['base','Que représente la tension (V) ?','La <b>force</b> de l\'outil, comme le nombre de cylindres d\'un moteur. 12 V = basse, 18 V = élevée.'],
+ ['base','Que représente l\'intensité (A) ?','La <b>puissance délivrée</b> (débit), comme les chevaux d\'un moteur. Standard ≈ 65 CV / ProCORE HD ≈ 150 CV.'],
+ ['base','Que représente la capacité (Ah) ?','La <b>taille du réservoir</b>, donc l\'<b>autonomie</b>. 4 Ah = petite, 8 à 12 Ah = grande.'],
+ ['base','Formule de l\'énergie d\'une batterie ?','<b>Wh = V × Ah</b><br>ex. 18 V × 12 Ah = 216 Wh'],
+ ['base','12 V / 18 V / 40 V max : pour quels usages ?','12 V → second œuvre<br>18 V → gros œuvre<br>40 V max → jardin & forte puissance'],
+ ['base','Tension d\'une cellule lithium-ion ?','<b>3,6 V</b> nominale (4,0 V max).'],
+ ['base','Cellules en série : on additionne… ?','Les <b>volts</b>. 5 cellules × 3,6 V = 18 V.'],
+ ['base','Chaînes en parallèle : on additionne… ?','Les <b>ampères-heure</b>. 2 chaînes de 4 Ah = 8 Ah.'],
+ ['base','Dimensions et puissance d\'une cellule 18650 ?','18 mm × 65 mm, ≈ 79 W (puissance standard).'],
+ ['base','Dimensions et puissance d\'une cellule 21700 ?','21 mm × 70 mm, ≈ 162 W (haute puissance).'],
+ ['bosch','ProCORE18V : gain de puissance des cellules HD ?','<b>+87 %</b> de puissance (45 A par couche contre 24 A).'],
+ ['bosch','ProCORE18V : nom du système de refroidissement et gains ?','<b>Coolpack 2.0</b> : durée de vie jusqu\'à 135 %, temps d\'exécution jusqu\'à 150 %.'],
+ ['bosch','ProCORE18V : particularité de l\'assemblage ?','Connecteurs en <b>cuivre soudés au laser</b> → conductivité 3× supérieure.'],
+ ['bosch','ProCORE18V : compacité et compatibilité ?','Au moins <b>29 % plus compacte</b> que les concurrentes, <b>100 % compatible</b> avec les outils depuis 2008.'],
+ ['bosch','Les 3 familles ProCORE18V et leur capacité type ?','Compact 4,0 Ah · Performance 8,0 Ah · Endurance 12,0 Ah'],
+ ['bosch','Quels outils pour la batterie Endurance 12 Ah ?','Scie sur table, perforateur &gt; 4 J, scie à onglet.'],
+ ['bosch','Quelles batteries pour les outils BITURBO ?','ProCORE18V(+) 5,5 Ah, 8,0 Ah ou 12,0 Ah.'],
+ ['bosch','ProCORE 12 Ah : temps de charge sur GAL 18V-160 vs GAL 18V-20 ?','<b>53 min</b> contre <b>357 min</b> (≈ 6 h).'],
+ ['bosch','Gamme Expert : que sont les cellules « tabless » ?','Cellules <b>sans connecteurs</b> : une multitude de chemins de courant → moins de résistance, moins de chaleur, plus de puissance.'],
+ ['bosch','FlexTemp Charging (Expert) : plage de charge ?','De <b>−10 °C à +55 °C</b>.'],
+ ['bosch','EXAL18V-160 : caractéristiques clés ?','3× plus rapide que le GAL 18V-40, 16 A, EXBA18V-80 en 39 min, 3 modes : Standard, Power Boost, Longue durée de vie.'],
+ ['bosch','EXAL 18V2-320 : caractéristiques clés ?','6× plus rapide, double baie en parallèle (16 A/baie), 2 batteries 8 Ah en 39 min, Active Air Cooling 3.0, L-BOXX.'],
+ ['dewalt','POWERSTACK : quelles capacités et quels gains ?','1,7 Ah (+25 % compacte) et 5 Ah (+50 % de travail).<br>50 % plus puissante, 2× durée de vie.'],
+ ['dewalt','POWERSTACK : quelle technologie de cellule ?','Des cellules <b>empilées</b> (pouch) au lieu de cylindriques.'],
+ ['dewalt','FlexVolt : comment une batterie fait 18 V et 54 V ?','18 V : 5 en série × 3 en parallèle (12 Ah).<br>54 V : 15 en série × 1 (4 Ah).<br>Toujours 216 Wh.'],
+ ['dewalt','Slogan XR FlexVolt 54 V ?','« La puissance du filaire, la liberté du sans fil ! »'],
+ ['makita','Les 3 plateformes Makita ?','<b>XGT</b> 40 V max (+22 outils) · <b>LXT</b> 18 V (+320 outils) · <b>CXT</b> 12 V max (+60 outils)'],
+ ['makita','Plateforme Makita la plus large ?','<b>LXT 18 V</b> : plus de 320 outils.'],
+ ['makita','Référence batterie BL1860B ?','18 V 6 Ah, réf. <b>197422-4</b>, témoin de charge intégré.'],
+ ['makita','DC18RC : temps de charge 3 / 4 / 5 / 6 Ah ?','22 / 36 / 45 / 55 min'],
+ ['makita','Que contient le LOT0154 ?','Chargeur rapide DC18RC + 2 batteries BL1850B 18 V 5 Ah.'],
+ ['milw','REDLINK™ : à quoi ça sert ?','Électronique intelligente : <b>communication batterie ↔ outil</b> pour performance et protection.'],
+ ['milw','Température minimale d\'utilisation REDLITHIUM ?','<b>−20 °C</b> (−28 °C pour High Output).'],
+ ['milw','Où se trouve le voyant de charge chez Milwaukee ?','Sur les <b>outils M12</b> et sur la <b>batterie M18</b>.'],
+ ['milw','Les 3 niveaux de batteries M18 ?','REDLITHIUM (fondamentale) · High Output XC5 (+50 % puissance, +50 % plus frais) · FORGE (maximale)'],
+ ['milw','FORGE : temps de recharge ?','80 % en <b>35 min</b>, 100 % en <b>45 min</b> (super chargeur double baie).'],
+ ['milw','FORGE : nom du refroidissement actif ?','<b>COOL-CYCLE™</b>'],
+ ['milw','Comment obtenir une M18 8 Ah ?','2 chaînes de 5 cellules 21700 de 4 Ah + platine REDLINK.'],
+ ['milw','MX FUEL : puissance équivalente ?','72 V continu ≈ moteur thermique 70 cm³ ≈ 5 CV ≈ 3 700 W.'],
+ ['milw','La recette Milwaukee en 3 éléments ?','Moteur brushless + batterie REDLITHIUM + REDLINK PLUS.'],
+];
+let fcState=store.get('fcState',{}); // idx -> {box:0..3}
+let fcCur=null;
+const fcEl=document.getElementById('fc');
+function fcPool(){const f=document.getElementById('fcFilter').value;return CARDS.map((c,i)=>i).filter(i=>f==='all'||CARDS[i][0]===f)}
+function fcStats(){
+  const pool=fcPool();const known=pool.filter(i=>(fcState[i]?.box||0)>=2).length;
+  document.getElementById('fcBar').style.width=(pool.length?known/pool.length*100:0)+'%';
+  document.getElementById('fcStat').textContent=`${known}/${pool.length} maîtrisées`;
+}
+function fcNext(){
+  const pool=fcPool();
+  // weighted pick: lower box => more weight, avoid repeat
+  const w=pool.map(i=>{const b=fcState[i]?.box||0;return i===fcCur&&pool.length>1?0:[8,4,2,1][b]});
+  let r=Math.random()*w.reduce((a,b)=>a+b,0),k=0;
+  for(;k<w.length;k++){r-=w[k];if(r<=0)break}
+  fcCur=pool[Math.min(k,pool.length-1)];
+  fcEl.classList.remove('flip');
+  setTimeout(()=>{
+    const c=CARDS[fcCur];
+    document.getElementById('fcQ').innerHTML=c[1];
+    document.getElementById('fcA').innerHTML=c[2];
+    document.getElementById('fcTheme').innerHTML=tag(c[0]);
+    const b=fcState[fcCur]?.box||0;
+    document.getElementById('fcCount').textContent=['Nouvelle','À revoir','En cours','Maîtrisée'][b];
+  },fcEl.classList.contains('flip')?250:0);
+  fcStats();
+}
+function fcRate(ok){
+  const s=fcState[fcCur]||{box:0};
+  s.box=ok?Math.min(3,s.box+1):1;
+  fcState[fcCur]=s;store.set('fcState',fcState);fcNext();
+}
+fcEl.onclick=()=>fcEl.classList.toggle('flip');
+document.getElementById('fcOk').onclick=()=>fcRate(true);
+document.getElementById('fcKo').onclick=()=>fcRate(false);
+document.getElementById('fcFilter').onchange=()=>{fcCur=null;fcNext()};
+document.getElementById('fcReset').onclick=()=>{fcState={};store.set('fcState',fcState);fcNext()};
+document.addEventListener('keydown',e=>{
+  if(!document.getElementById('flash').classList.contains('active'))return;
+  if(e.code==='Space'){e.preventDefault();fcEl.classList.toggle('flip')}
+  if(e.key==='ArrowRight')fcRate(true);
+  if(e.key==='ArrowLeft')fcRate(false);
+});
+fcNext();
+
+/* ---------- QUIZ ---------- */
+// [theme, question, [options], correctIndex, explanation]
+const QS=[
+ ['base','Un client hésite entre une 18 V 4 Ah et une 18 V 8 Ah pour sa visseuse. Quel est le bon argument ?',['La 8 Ah visse plus fort','La 8 Ah offre environ deux fois plus d\'autonomie ; la 4 Ah est plus légère et compacte','Elles sont identiques, seule la marque change','La 8 Ah recharge plus vite'],1,'Argument vendeur : la tension (18 V) donne la force, les Ah donnent l\'autonomie (le réservoir). On conseille selon l\'usage : 4 Ah pour la légèreté, 8 Ah pour durer toute la journée.'],
+ ['base','Objection : « 18 V c\'est 18 V, toutes les batteries se valent. » Que répondre ?',['Il a raison, prenez la moins chère','À tension égale, c\'est l\'intensité (A) qui change : une batterie haute densité délivre bien plus de puissance (≈ 150 CV contre 65 CV)','Seule la couleur change','Les batteries chères sont juste plus lourdes'],1,'Le volt, c\'est le moteur ; l\'ampère, ce sont les chevaux. Une ProCORE HD délivre beaucoup plus de puissance qu\'une batterie standard, avec la même tension.'],
+ ['base','Un plaquiste ou un électricien (second œuvre) cherche une gamme légère pour travailler toute la journée. Que proposer en priorité ?',['12 V','18 V','40 V max','54 V FlexVolt'],0,'12 V pour le second œuvre : outils plus légers et compacts, suffisants pour visser et percer de petits diamètres. On réserve le 18 V au gros œuvre.'],
+ ['base','Un paysagiste veut remplacer son matériel thermique de jardin. Vers quelle tension l\'orienter ?',['12 V','18 V compact','Haute tension : 40 V max (Makita XGT) ou 54 V (DeWalt FlexVolt)','Peu importe'],2,'Jardin et forte puissance = 40 V max. Chez DeWalt, FlexVolt 54 V apporte « la puissance du filaire ».'],
+ ['base','Pour comparer honnêtement deux batteries de tensions différentes, quel chiffre mettre en avant ?',['Le nombre de volts seul','Le nombre d\'Ah seul','L\'énergie en Wh = V × Ah','Le poids'],2,'Exemple FlexVolt : 18 V × 12 Ah = 54 V × 4 Ah = 216 Wh. C\'est la même énergie, donc la même « quantité de travail ».'],
+ ['base','Un client demande pourquoi une batterie à cellules 21700 coûte plus cher qu\'une batterie à cellules 18650. Votre argument ?',['Elle est plus jolie','Chaque cellule 21700 délivre environ 162 W contre 79 W, soit deux fois plus de puissance pour les outils exigeants','Elle se recharge sans chargeur','Elle n\'a pas d\'électronique'],1,'La cellule est le cœur de la batterie : une 21700 (21 × 70 mm) double la puissance disponible par cellule.'],
+ ['base','Un client trouve sa batterie 8 Ah plus grosse et plus lourde que sa 4 Ah. Comment l\'expliquer ?',['C\'est un défaut','Elle contient deux fois plus de cellules (2 chaînes en parallèle) : c\'est ce qui double l\'autonomie','Elle contient un ventilateur','Elle est en 36 V'],1,'Plus de cellules en parallèle = plus d\'Ah, donc plus d\'autonomie. Le poids est la contrepartie : on conseille selon l\'outil.'],
+ ['bosch','Un artisan a des outils Bosch 18 V achetés en 2012 et craint que les ProCORE ne soient pas compatibles. Que lui dire ?',['Il faut racheter les outils','Les ProCORE18V sont 100 % compatibles avec les outils Bosch depuis 2008','Seulement avec un adaptateur','Uniquement avec les outils BITURBO'],1,'C\'est un argument fort : le client garde tout son parc et profite tout de suite de la nouvelle technologie.'],
+ ['bosch','Objection : « Les batteries haute capacité sont trop encombrantes. » Quel argument ProCORE avancer ?',['Elles sont au moins 29 % plus compactes que les batteries haute performance concurrentes','Elles sont en 12 V','Elles n\'ont pas de boîtier','On peut les plier'],0,'Design compact : la ProCORE garde un outil équilibré et maniable, même en grosse capacité.'],
+ ['bosch','Un client se plaint que ses batteries chauffent et s\'usent vite à la meuleuse. Quel avantage ProCORE mettre en avant ?',['Le témoin de charge','Le refroidissement Coolpack 2.0 : durée de vie jusqu\'à 135 % et temps d\'exécution jusqu\'à 150 %','La couleur noire','Le poids réduit'],1,'Une batterie qui chauffe moins travaille plus longtemps et vieillit moins vite : c\'est un bénéfice économique direct.'],
+ ['bosch','Un client achète un perforateur Bosch BITURBO de plus de 4 J et veut l\'utiliser avec ses batteries GBA 2 Ah. Que faire ?',['Valider, ça fonctionnera pareil','Lui conseiller une ProCORE Endurance 12 Ah (les BITURBO demandent au minimum 5,5 Ah)','Lui vendre une 12 V','Lui proposer un adaptateur'],1,'Les BITURBO ne donnent leur pleine puissance qu\'avec une ProCORE18V de 5,5, 8 ou 12 Ah. Bien conseiller ici évite un retour client mécontent.'],
+ ['bosch','Un menuisier achète une scie circulaire GKS. Quelle batterie lui proposer en complément ?',['Compact 4,0 Ah','Performance 8,0 Ah','GBA 2,0 Ah','Aucune, c\'est inutile'],1,'Scies circulaires et plongeantes, meuleuses GWS, perforateurs de 2 à 4 J → ProCORE Performance 8 Ah.'],
+ ['bosch','Un client achète une ProCORE 12 Ah mais garde son vieux chargeur GAL 18V-20. Quelle vente additionnelle proposer ?',['Aucune','Un GAL 18V-160 : 53 min au lieu de 357 min (près de 6 h) pour une charge complète','Une deuxième batterie 2 Ah','Un coffret seul'],1,'Avec le petit chargeur, la batterie est immobilisée une demi-journée. Le chargeur rapide fait gagner du temps sur chantier : c\'est l\'argument décisif.'],
+ ['bosch','Le client veut savoir ce qui rend la ProCORE plus efficace « à l\'intérieur ». Quel argument d\'assemblage donner ?',['Des connecteurs en cuivre soudés au laser : conductivité 3 fois supérieure','Des cellules collées','Des vis en titane','Un câble interne'],0,'Moins de pertes électriques, donc plus de puissance utile et moins de chaleur.'],
+ ['bosch','Un charpentier charge ses batteries dans son camion l\'hiver comme l\'été. Quel argument de la gamme Expert lui parle ?',['FlexTemp Charging : charge de −10 °C à +55 °C','Le mode Power Boost','La compatibilité 2008','Le voyant de charge'],0,'Il peut recharger sans attendre que la batterie se réchauffe ou refroidisse : pas de temps perdu.'],
+ ['bosch','Un chef d\'équipe ne veut aucun temps d\'arrêt et fait tourner 2 batteries 8 Ah. Quel chargeur lui proposer ?',['GAL 18V-20','EXAL 18V2-320 : deux EXBA18V-80 chargées à 100 % en 39 min, rangement L-BOXX','GAL 18V-40','Un chargeur 12 V'],1,'Le double chargeur en parallèle (16 A par baie) charge jusqu\'à 6 fois plus vite qu\'un GAL 18V-40, et tout se range dans un L-BOXX pour le transport.'],
+ ['bosch','Un client demande pourquoi les batteries Expert chauffent moins sous forte charge. Quel argument donner ?',['Des cellules « tabless » (sans connecteurs) : beaucoup de chemins de courant, donc moins de résistance et de chaleur','Elles sont moins puissantes','Elles sont en 12 V','Elles ont un ventilateur externe'],0,'Résultat pour le client : un fonctionnement plus froid, plus de puissance et plus d\'autonomie là où les batteries traditionnelles surchauffent.'],
+ ['bosch','Un client veut faire durer ses batteries Expert le plus longtemps possible. Quel réglage de l\'EXAL18V-160 lui montrer ?',['Power Boost','Standard','Longue durée de vie','Aucun'],2,'L\'EXAL18V-160 a trois modes : Standard, Power Boost (rapidité) et Longue durée de vie (préserve les cellules).'],
+ ['dewalt','Un client DeWalt a de nombreuses batteries XR 18 V et veut passer à des outils 54 V. Quel argument FlexVolt donner ?',['Il doit tout racheter','Les batteries FlexVolt fonctionnent aussi sur ses outils XR 18 V : une seule batterie pour tout le parc','FlexVolt ne fonctionne qu\'en 54 V','Il lui faut un adaptateur'],1,'La batterie s\'adapte automatiquement : 18 V sur les outils XR, 54 V sur les outils FlexVolt. Le client investit sans rien perdre.'],
+ ['dewalt','Un électricien veut une batterie légère pour visser au plafond, sans perdre de puissance. Que lui proposer chez DeWalt ?',['FlexVolt 12 Ah','POWERSTACK 1,7 Ah : 25 % plus compacte et 50 % plus puissante','Une batterie 54 V','Rien chez DeWalt'],1,'POWERSTACK (cellules empilées) combine la légèreté et la puissance : c\'est idéal pour travailler bras levés.'],
+ ['dewalt','Objection : « Les nouvelles batteries s\'usent aussi vite que les anciennes. » Quel argument POWERSTACK donner ?',['2 fois plus de durée de vie','Garantie à vie','Elles ne s\'usent jamais','Elles sont moins chères'],0,'POWERSTACK : 2× plus de durée de vie et 50 % de travail en plus pour la 5 Ah. Le coût d\'usage baisse.'],
+ ['dewalt','Un client travaille encore au filaire ou au thermique pour couper du béton. Quel slogan FlexVolt reprendre ?',['« Petit mais costaud »','« La puissance du filaire, la liberté du sans fil »','« Toujours plus léger »','« Zéro émission »'],1,'FlexVolt couvre le bois, le métal, le béton et le jardin. C\'est l\'argument pour faire passer les gros utilisateurs au sans-fil.'],
+ ['dewalt','Objection : « Une 54 V 4 Ah, c\'est moins qu\'une 18 V 12 Ah. » Que répondre ?',['C\'est vrai','C\'est la même batterie et la même énergie (216 Wh) : seul le câblage interne change','La 54 V a deux fois plus d\'énergie','Ça dépend du chargeur'],1,'18 V × 12 Ah = 54 V × 4 Ah = 216 Wh. On échange des Ah contre des volts.'],
+ ['makita','Un client veut la gamme Makita qui offre le plus grand choix d\'outils sur une seule batterie. Laquelle proposer ?',['XGT 40 V max','LXT 18 V : plus de 320 outils','CXT 12 V max','Dolmar thermique'],1,'LXT 18 V est la plateforme la plus large : le client pourra compléter son parc dans tous les métiers.'],
+ ['makita','Un client Makita a besoin d\'outils très puissants (burineur, gros perfo). Quelle gamme lui présenter ?',['CXT 12 V max','LXT 18 V','XGT 40 V max','Aucune'],2,'XGT 40 V max : la nouvelle gamme forte puissance (plus de 22 outils).'],
+ ['makita','Un client Makita en second œuvre cherche des outils compacts. Quelle gamme lui présenter ?',['CXT 12 V max (plus de 60 outils)','XGT 40 V max','LXT uniquement','Dolmar'],0,'CXT 12 V max : compact et léger, batteries de 1,5 à 4 Ah.'],
+ ['makita','Un client démarre en 18 V Makita et veut 2 batteries et un chargeur rapide au meilleur prix. Que lui proposer ?',['BL1860B seule','LOT0154 : chargeur DC18RC + 2 batteries BL1850B 5 Ah','Un chargeur seul','Deux batteries CXT'],0,'Le lot permet de démarrer avec deux batteries qui tournent : pendant que l\'une travaille, l\'autre charge (45 min pour une 5 Ah).'],
+ ['makita','Un client demande en combien de temps sa BL1860B 6 Ah se recharge sur un DC18RC. Que lui répondre ?',['22 min','36 min','55 min','2 h'],2,'55 min : une pause déjeuner suffit. Repères : 3 Ah en 22 min, 4 Ah en 36 min, 5 Ah en 45 min.'],
+ ['milw','Un couvreur travaille dehors tout l\'hiver. Quel argument Milwaukee lui donner ?',['Les batteries REDLITHIUM fonctionnent jusqu\'à −20 °C, et même −28 °C en High Output','Il faut garder les batteries au chaud','La recharge à l\'énergie solaire','Il ne doit pas travailler sous 0 °C'],0,'Grâce aux conducteurs renforcés et aux grandes cellules, les batteries gardent leurs performances dans le froid.'],
+ ['milw','Un client tombe régulièrement en panne de batterie au milieu d\'une tâche. Quel atout Milwaukee lui montrer ?',['Le voyant de charge sur la batterie M18 (et sur l\'outil en M12)','Le coffret','Le moteur brushless','La couleur rouge'],0,'Le voyant indique précisément l\'autonomie restante : le client anticipe la recharge.'],
+ ['milw','Un mécanicien en atelier (huiles, solvants) veut une batterie haut de gamme. Laquelle proposer ?',['REDLITHIUM standard','M18 FORGE : boîtier résistant aux huiles, solvants et graisses','Une batterie M12','Une Powerstack'],1,'FORGE est la batterie la plus puissante de la gamme M18. Elle se recharge vite (80 % en 35 min) et son boîtier est protégé pour les environnements gras.'],
+ ['milw','Un client Milwaukee veut recharger très vite entre deux tâches. Quel chiffre FORGE lui donner ?',['80 % en 35 min et 100 % en 45 min (super chargeur double baie)','100 % en 15 min','2 h','Pas de chiffre disponible'],0,'Associé au refroidissement actif COOL-CYCLE™, ce temps de charge réduit les temps d\'arrêt.'],
+ ['milw','Un client hésite entre une batterie REDLITHIUM standard et une High Output XC5 pour une meuleuse. Quel argument donner ?',['Aucune différence','La High Output XC5 donne +50 % de puissance et reste 50 % plus fraîche sous forte charge','La standard est plus puissante','La High Output XC5 n\'est pas compatible'],1,'Pour les outils exigeants, la High Output évite les chutes de régime et la surchauffe.'],
+ ['milw','Une entreprise de TP utilise une découpeuse thermique en ville et en intérieur. Quel argument MX FUEL lui donner ?',['Zéro émission, avec une puissance équivalente à un moteur thermique de 70 cm³ (≈ 3 700 W, 5 CV)','Plus léger que tout','Fonctionne sur secteur','Moins puissant mais silencieux'],0,'MX FUEL transfère 72 V en courant continu : sa puissance est comparable à celle d\'une découpeuse thermique de 74 cm³ (3,7 kW), sans gaz d\'échappement.'],
+ ['milw','Un client demande à quoi sert REDLINK™. Quelle réponse orientée bénéfice donner ?',['C\'est un logo','La batterie et l\'outil communiquent pour protéger l\'outil des surcharges et optimiser les performances : l\'investissement est préservé','Il sert à recharger plus vite','Il remplace le chargeur'],1,'REDLINK : une électronique intelligente qui gère la performance et la protection.'],
+ ['milw','Un client a déjà des outils M18 et se demande si la FORGE ira dessus. Que lui répondre ?',['Non, il faut de nouveaux outils','Oui, la FORGE est compatible avec tous les outils M18','Seulement avec les outils FUEL','Seulement avec un adaptateur'],1,'La plateforme M18 compte plus de 325 outils. Le client améliore sa batterie sans changer d\'outils.'],
+ ['milw','Un client fait tomber souvent ses batteries sur chantier. Quel argument Milwaukee lui donner ?',['Construction antichoc, support monobloc, protection contre l\'eau et la poussière','Elles sont plus légères','Le témoin de charge','Elles flottent'],0,'Le boîtier protège les cellules et l\'électronique, ce qui donne une meilleure durée de vie en conditions de chantier.'],
+];
+let qList=[],qi=0,qOk=0,qWrong=[];
+const $=id=>document.getElementById(id);
+function qBest(){const b=store.get('qBest',null);$('qBest').textContent=b!==null?`Meilleur score : ${b} %`:''}
+qBest();
+$('qGo').onclick=()=>{
+  const t=$('qTheme').value,n=+$('qNb').value;
+  qList=shuffle(QS.filter(q=>t==='all'||q[0]===t)).slice(0,n);
+  qi=0;qOk=0;qWrong=[];
+  $('quizStart').style.display='none';$('quizEnd').style.display='none';$('quizBox').style.display='block';
+  qShow();
+};
+function qShow(){
+  const q=qList[qi];
+  $('qProg').textContent=`Question ${qi+1} / ${qList.length} · Score ${qOk}`;
+  $('qTag').innerHTML=tag(q[0]);
+  $('qText').textContent=q[1];
+  $('qExpl').style.display='none';$('qNext').style.display='none';
+  const order=shuffle(q[2].map((o,i)=>i));
+  $('qOpts').innerHTML='';
+  order.forEach(i=>{
+    const b=document.createElement('button');b.className='q-opt';b.textContent=q[2][i];
+    b.onclick=()=>{
+      [...$('qOpts').children].forEach(x=>x.disabled=true);
+      const good=i===q[3];
+      if(good)qOk++;else{b.classList.add('bad');qWrong.push(q)}
+      [...$('qOpts').children].forEach(x=>{if(x.textContent===q[2][q[3]])x.classList.add('good')});
+      $('qExpl').innerHTML=(good?'✔ <b>Bonne réponse.</b> ':'✘ <b>Pas tout à fait.</b> ')+q[4];
+      $('qExpl').style.display='block';$('qNext').style.display='inline-block';
+      $('qProg').textContent=`Question ${qi+1} / ${qList.length} · Score ${qOk}`;
+    };
+    $('qOpts').appendChild(b);
+  });
+}
+$('qNext').onclick=()=>{qi++;if(qi<qList.length)qShow();else qEnd()};
+function qEnd(){
+  $('quizBox').style.display='none';$('quizEnd').style.display='block';
+  const pct=Math.round(qOk/qList.length*100);
+  $('qScore').textContent=`${qOk} / ${qList.length} (${pct} %)`;
+  $('qMsg').textContent=pct>=80?'Excellent, c\'est maîtrisé !':pct>=50?'Bien, encore un petit effort sur les points ci-dessous.':'À retravailler : relisez les fiches puis passez aux flashcards.';
+  $('qWrong').innerHTML=qWrong.length?'<h3>À revoir :</h3><ul>'+qWrong.map(q=>`<li>${tag(q[0])}${q[1]}<br><span class="small">→ ${q[2][q[3]]}</span></li>`).join('')+'</ul>':'';
+  const best=store.get('qBest',0);if(pct>best)store.set('qBest',pct);
+}
+$('qAgain').onclick=()=>{$('quizEnd').style.display='none';$('quizStart').style.display='block';qBest()};
+
+/* ---------- EX1 scenarios ---------- */
+// {t:theme, c:client, q:[[label,[opts],ok],...], d:debrief}
+const SC=[
+ {t:'bosch',c:'« Je suis plaquiste, je visse toute la journée, souvent bras levés. J\'ai déjà des outils Bosch 18 V de 2011. »',
+  q:[['Batterie à conseiller',['ProCORE18V Compact 4,0 Ah','ProCORE18V Endurance 12,0 Ah','Batterie 40 V max'],0],
+     ['Argument clé',['100 % compatible avec ses outils depuis 2008, et au moins 29 % plus compacte','Elle permet d\'utiliser une scie sur table','Elle charge de −10 °C à +55 °C'],0]],
+  d:'Pour la visserie, une batterie légère suffit : Compact 4 Ah. Le client garde ses outils (compatibilité depuis 2008) et gagne en maniabilité.'},
+ {t:'bosch',c:'« Je prends ce perforateur BITURBO de plus de 4 J. J\'ai des batteries 2 Ah et un petit chargeur GAL 18V-20. »',
+  q:[['Batterie à conseiller',['Ses GBA 2 Ah suffisent','ProCORE18V Endurance 12,0 Ah','ProCORE18V Compact 4,0 Ah'],1],
+     ['Vente additionnelle',['Un GAL 18V-160 : 53 min au lieu de 357 min pour une 12 Ah','Une lampe GLI','Rien de plus'],0]],
+  d:'Un BITURBO a besoin d\'au moins 5,5 Ah pour donner sa pleine puissance, et un perforateur de plus de 4 J relève de l\'Endurance. Sans chargeur rapide, sa 12 Ah resterait immobilisée près de 6 h.'},
+ {t:'bosch',c:'« On est deux sur le chantier, on travaille l\'hiver et on ne veut jamais attendre une batterie. »',
+  q:[['Chargeur à conseiller',['GAL 18V-40 compact','EXAL 18V2-320 double baie','GAL 18V-20'],1],
+     ['Argument clé',['Deux batteries 8 Ah chargées en 39 min, et la charge FlexTemp fonctionne de −10 °C à +55 °C','Il est 100 % compatible depuis 2008','Il est 29 % plus compact'],0]],
+  d:'L\'EXAL 18V2-320 charge en parallèle (16 A par baie), jusqu\'à 6 fois plus vite qu\'un GAL 18V-40. Avec FlexTemp, le froid ne bloque pas la charge. Il se range en L-BOXX.'},
+ {t:'dewalt',c:'« J\'ai plein de batteries DeWalt XR 18 V. Je voudrais une tronçonneuse et une débroussailleuse puissantes sans tout racheter. »',
+  q:[['Produit à conseiller',['Outils et batteries XR FlexVolt 54 V','Batterie POWERSTACK 1,7 Ah','Passer chez une autre marque'],0],
+     ['Argument clé',['La batterie FlexVolt fonctionne aussi sur tous ses outils XR 18 V','Elle est 25 % plus compacte','Elle fonctionne jusqu\'à −28 °C'],0]],
+  d:'FlexVolt offre « la puissance du filaire, la liberté du sans fil ». Le client utilise la même batterie sur ses outils 18 V et ses outils 54 V : rien n\'est perdu.'},
+ {t:'dewalt',c:'« Je suis électricien, je travaille souvent au plafond. Ma visseuse avec sa grosse batterie me fatigue. »',
+  q:[['Batterie à conseiller',['FlexVolt 12 Ah','POWERSTACK 1,7 Ah','Batterie 54 V'],1],
+     ['Argument clé',['25 % plus compacte et 50 % plus puissante, avec 2 fois plus de durée de vie','Elle passe en 54 V','Elle convient au béton'],0]],
+  d:'POWERSTACK (cellules empilées) allège l\'outil sans perte de puissance, et elle dure plus longtemps.'},
+ {t:'makita',c:'« Je m\'installe à mon compte et je pars sur Makita 18 V. Il me faut de quoi démarrer avec 2 batteries. »',
+  q:[['Produit à conseiller',['LOT0154 : DC18RC + 2 × BL1850B 5 Ah','Une batterie CXT 12 V','Une batterie XGT 40 V seule'],0],
+     ['Argument clé',['La gamme LXT 18 V compte plus de 320 outils : il pourra compléter son parc dans tous les métiers','La batterie fonctionne en 54 V','Le chargeur est solaire'],0]],
+  d:'Le lot donne deux batteries qui tournent (5 Ah chargée en 45 min). Avec la plus large plateforme du marché, son investissement est pérenne.'},
+ {t:'makita',c:'« Chez Makita, il me faut un burineur ou un gros perforateur, vraiment puissant. »',
+  q:[['Gamme à conseiller',['CXT 12 V max','LXT 18 V','XGT 40 V max'],2],
+     ['Argument clé',['La gamme forte puissance dédiée (plus de 22 outils, et elle s\'élargit)','La plus compacte','Plus de 320 outils'],0]],
+  d:'XGT 40 V max est la nouvelle gamme forte puissance de Makita, pour les applications lourdes.'},
+ {t:'milw',c:'« Je suis couvreur, je bosse dehors tout l\'hiver avec des outils M18 qui tirent fort. »',
+  q:[['Batterie à conseiller',['M18 High Output','Une M12 standard','Une POWERSTACK'],0],
+     ['Argument clé',['Fonctionne jusqu\'à −28 °C, avec +50 % de puissance et +50 % de fraîcheur sous forte charge','Elle est compatible depuis 2008','Elle charge de −10 °C à +55 °C'],0]],
+  d:'Les REDLITHIUM fonctionnent jusqu\'à −20 °C, et jusqu\'à −28 °C en High Output. Pour les outils exigeants, la High Output évite les chutes de puissance.'},
+ {t:'milw',c:'« Je suis mécanicien poids lourds. Dans l\'atelier il y a de l\'huile partout et je n\'ai pas le temps d\'attendre une recharge. »',
+  q:[['Batterie à conseiller',['M18 FORGE','REDLITHIUM 2 Ah','Une batterie 12 V'],0],
+     ['Argument clé',['Boîtier résistant aux huiles, solvants et graisses, et 80 % de charge en 35 min','Elle passe en 54 V','Elle est 29 % plus compacte'],0]],
+  d:'La FORGE, c\'est la performance maximale M18 : refroidissement COOL-CYCLE™, charge rapide et boîtier protégé. Elle est compatible avec tous ses outils M18.'},
+ {t:'milw',c:'« Notre entreprise de TP utilise des découpeuses thermiques, mais on travaille de plus en plus en ville et en intérieur. »',
+  q:[['Produit à conseiller',['Système MX FUEL','Une M12','Une meuleuse 18 V'],0],
+     ['Argument clé',['Zéro émission, avec une puissance équivalente à un moteur thermique de 70 cm³ (≈ 3 700 W)','Il est plus léger qu\'une visseuse','Il fonctionne sur secteur'],0]],
+  d:'MX FUEL transfère 72 V en courant continu : sa puissance égale celle d\'une découpeuse thermique, sans gaz d\'échappement ni mélange essence.'},
+];
+let scOrder=shuffle(SC),sci=0,scPts=0,scTot=0;
+function scShow(){
+  const s=scOrder[sci];
+  $('scProg').innerHTML=`${tag(s.t)} Client ${sci+1} / ${scOrder.length}`;
+  $('scScore').textContent=scTot?`Score : ${scPts} / ${scTot}`:'';
+  $('scClient').textContent=s.c;
+  $('scQs').innerHTML=s.q.map((q,k)=>{
+    const ord=shuffle(q[1].map((o,i)=>i));
+    return `<div class="scq"><b>${q[0]}</b>${ord.map(i=>`<label class="q-opt"><input type="radio" name="sc${k}" value="${i}"> ${q[1][i]}</label>`).join('')}</div>`;
+  }).join('');
+  $('scDebrief').style.display='none';$('scValid').style.display='inline-block';$('scNext').style.display='none';
+}
+$('scValid').onclick=()=>{
+  const s=scOrder[sci];let all=true;
+  s.q.forEach((q,k)=>{if(!document.querySelector(`input[name=sc${k}]:checked`))all=false});
+  if(!all){$('scDebrief').innerHTML='Répondez aux deux questions avant de valider.';$('scDebrief').style.display='block';return}
+  s.q.forEach((q,k)=>{
+    const v=+document.querySelector(`input[name=sc${k}]:checked`).value;scTot++;if(v===q[2])scPts++;
+    document.querySelectorAll(`input[name=sc${k}]`).forEach(r=>{r.disabled=true;const l=r.parentElement;if(+r.value===q[2])l.classList.add('good');else if(r.checked)l.classList.add('bad')});
+  });
+  $('scDebrief').innerHTML='<b>Débrief vendeur :</b> '+s.d;$('scDebrief').style.display='block';
+  $('scValid').style.display='none';$('scNext').style.display='inline-block';
+  $('scNext').textContent=sci<scOrder.length-1?'Client suivant →':'Recommencer ↺';
+  $('scScore').textContent=`Score : ${scPts} / ${scTot}`;
+};
+$('scNext').onclick=()=>{sci++;if(sci>=scOrder.length){scOrder=shuffle(SC);sci=0;scPts=0;scTot=0}scShow()};
+scShow();
+
+/* ---------- EX2 CAB ---------- */
+const CAB=[
+ ['Bosch – Coolpack 2.0','La batterie chauffe moins : elle dure plus longtemps et travaille plus longtemps'],
+ ['Bosch – ProCORE compatible depuis 2008','Le client garde tous ses anciens outils : il n\'a rien à racheter'],
+ ['Bosch – ProCORE au moins 29 % plus compacte','L\'outil reste équilibré et maniable, donc moins de fatigue'],
+ ['Bosch – FlexTemp −10 °C / +55 °C','Il recharge même dans un camion froid ou chaud, sans attendre'],
+ ['DeWalt – FlexVolt 18 V / 54 V','Une seule batterie pour ses outils 18 V et ses outils 54 V'],
+ ['DeWalt – POWERSTACK 1,7 Ah','Une visseuse légère pour travailler bras levés, sans perdre de puissance'],
+ ['Makita – LXT, plus de 320 outils','Il pourra compléter son parc dans tous les métiers avec les mêmes batteries'],
+ ['Milwaukee – REDLINK™','L\'outil est protégé contre les surcharges : son investissement est préservé'],
+ ['Milwaukee – fonctionne jusqu\'à −20 °C / −28 °C','Aucune perte de performance sur les chantiers d\'hiver'],
+ ['Milwaukee – voyant de charge','Il sait quand recharger : plus de panne au milieu d\'une tâche'],
+];
+let cabOrder;
+function cabInit(){
+  cabOrder=shuffle(CAB);const ben=shuffle(CAB.map(c=>c[1]));
+  $('cab').innerHTML=cabOrder.map((c,i)=>`<div class="cabrow"><span class="cabf">${c[0]}</span><select id="cb${i}"><option value="">— bénéfice client —</option>${ben.map(b=>`<option>${b}</option>`).join('')}</select><span id="cbr${i}"></span></div>`).join('');
+  $('cabRes').textContent='';
+}
+$('cabCheck').onclick=()=>{
+  let g=0;cabOrder.forEach((c,i)=>{const ok=$('cb'+i).value===c[1];if(ok)g++;$('cbr'+i).innerHTML=ok?'✔':`✘ <span class="small">${c[1]}</span>`});
+  $('cabRes').textContent=`${g} / ${cabOrder.length}`;
+};
+$('cabReset').onclick=cabInit;cabInit();
+
+/* ---------- EX3 sort ---------- */
+const TOOLS=[['Perceuse-visseuse GSR','C'],['Visseuse à chocs GDX','C'],['Perforateur < 2 J','C'],['Scie sauteuse GST','C'],['Rabot GHO','C'],['Ponceuse vibrante GSS','C'],['Lampe GLI','C'],['Aspirateur < 1 L','C'],
+ ['Perforateur 2 à 4 J','P'],['Scie circulaire GKS','P'],['Scie sabre > 25 mm','P'],['Meuleuse GWS','P'],['Aspirateur > 1 L','P'],
+ ['Scie sur table','E'],['Perforateur > 4 J','E'],['Scie à onglet','E']];
+let sel=null;
+function sortInit(){
+  sel=null;$('sortRes').textContent='';
+  document.querySelectorAll('.bin>div').forEach(d=>d.innerHTML='');
+  $('pool').innerHTML='';
+  shuffle(TOOLS).forEach(t=>{
+    const c=document.createElement('span');c.className='chip';c.textContent=t[0];c.dataset.a=t[1];
+    c.onclick=e=>{e.stopPropagation();document.querySelectorAll('.chip').forEach(x=>x.classList.remove('sel'));c.classList.remove('good','bad');sel=c;c.classList.add('sel')};
+    $('pool').appendChild(c);
+  });
+}
+document.querySelectorAll('.bin').forEach(b=>b.onclick=()=>{if(sel){b.querySelector('div').appendChild(sel);sel.classList.remove('sel');sel=null}});
+$('pool').onclick=()=>{if(sel){$('pool').appendChild(sel);sel.classList.remove('sel');sel=null}};
+$('sortCheck').onclick=()=>{
+  let g=0,placed=0;
+  document.querySelectorAll('.bin').forEach(b=>b.querySelectorAll('.chip').forEach(c=>{placed++;const ok=c.dataset.a===b.dataset.b;c.classList.toggle('good',ok);c.classList.toggle('bad',!ok);if(ok)g++}));
+  $('sortRes').textContent=`${g} / ${TOOLS.length} bien placés`+(placed<TOOLS.length?` (${TOOLS.length-placed} non placés)`:'')+(g===TOOLS.length?' · Bravo !':'');
+};
+$('sortReset').onclick=sortInit;sortInit();
+</script>
+</body>
+</html>
